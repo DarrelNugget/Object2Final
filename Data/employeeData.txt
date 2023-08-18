@@ -1,0 +1,5 @@
+Chester,Kitchen,15,587-000-0000
+Darrel,Server,15,403-333-3333
+Gabe,Manager,20,587-000-0000
+Stadium,Cleaner,15,333-333-3333
+Bob,Server,100,444-444-4444
