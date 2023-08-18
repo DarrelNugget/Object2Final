@@ -1,0 +1,113 @@
+﻿@page "/counter"
+
+<h3>Add Employee</h3>
+
+<EditForm Model="newEmployee" OnValidSubmit="AddEmployee">
+    <div class="form-group">
+        <label for="name">Name:</label>
+
+        <InputText id="name" class="form-control" @bind-Value="newEmployee.Name" />
+    </div>
+    <div class="form-group">
+        <label for="position">Position:</label>
+        <InputText id="position" class="form-control" @bind-Value="newEmployee.Position" />
+    </div>
+    <div class="form-group">
+        <label for="salary">Salary:</label>
+        <InputNumber id="salary" class="form-control" @bind-Value="newEmployee.Salary" />
+    </div>
+    <div class="form-group">
+        <label for="contactPhone">Contact Phone:</label>
+        <InputText id="contactPhone" class="form-control" @bind-Value="newEmployee.ContactPhone" />
+    </div>
+    <button type="submit" class="btn btn-primary">Add Employee</button>
+</EditForm>
+
+@if (employeeAdded == true)
+{
+    <p>New Employee has been added.</p>
+}
+
+@code {
+
+    //Employee class
+    public class Employee
+    {
+        public string Name { get; set; }
+        public string Position { get; set; }
+        public double Salary { get; set; }
+        public string ContactPhone { get; set; }
+    }
+
+    //Employee List
+    private List<Employee> employees = new List<Employee>();
+    private Employee newEmployee = new Employee();
+    private bool employeeAdded = false;
+
+    //Add Employee
+    private void AddEmployee()
+    {
+        LoadData();
+        employees.Add(newEmployee);
+        newEmployee = new Employee(); 
+        SaveData();
+        employeeAdded = true;
+    }
+
+    //Save Data to txt file
+    private void SaveData()
+    {
+        string filePath = "C:/Users/Darrel Nguyen/Documents/Object Programming/Object-Programming2-DarrelN/FinalProjectObject/Data/employeeData.txt";
+
+        using StreamWriter writer = new StreamWriter(filePath);
+        foreach (var employee in employees)
+        {
+            writer.WriteLine($"{employee.Name},{employee.Position},{employee.Salary},{employee.ContactPhone}");
+        }
+    }
+    //Load data from txt file
+    private void LoadData()
+    {
+        string filePath = "C:/Users/Darrel Nguyen/Documents/Object Programming/Object-Programming2-DarrelN/FinalProjectObject/Data/employeeData.txt";
+
+        if (File.Exists(filePath))
+        {
+            employees.Clear();
+            try
+            {
+                using StreamReader reader = new StreamReader(filePath);
+                string line;
+                while ((line = reader.ReadLine()) != null)
+                {
+                    string[] parts = line.Split(',');
+                    if (parts.Length == 4)
+                    {
+                        try
+                        {
+                            Employee loadedEmployee = new Employee
+                                {
+                                    Name = parts[0],
+                                    Position = parts[1],
+                                    Salary = Convert.ToDouble(parts[2]),
+                                    ContactPhone = parts[3]
+                                };
+                            employees.Add(loadedEmployee);
+                        }
+                        catch (FormatException)
+                        {
+                            Console.WriteLine("Error: Invalid salary format for an employee. Skipping this employee.");
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine("Error: Invalid line format. Skipping this line.");
+                    }
+                }
+            }
+            catch (IOException)
+            {
+                Console.WriteLine("Error: An error occurred while reading the file.");
+            }
+        }
+    }
+}

@@ -1,0 +1,70 @@
+﻿@page "/employee-list"
+
+<div class="mt-3">
+    <h4>Employee List</h4>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Position</th>
+                <th>Salary</th>
+                <th>Contact Phone</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var employee in employees)
+            {
+                <tr>
+                    <td>@employee.Name</td>
+                    <td>@employee.Position</td>
+                    <td>@employee.Salary.ToString("C")</td>
+                    <td>@employee.ContactPhone</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<button class="btn btn-secondary mt-3" @onclick="LoadData">Load Data</button>
+
+@code {
+    //Employee Class
+    public class Employee
+    {
+        public string Name { get; set; }
+        public string Position { get; set; }
+        public double Salary { get; set; }
+        public string ContactPhone { get; set; }
+    }
+    
+    private List<Employee> employees = new List<Employee>();
+    //Load list from txt file
+    private void LoadData()
+    {
+        string filePath = "C:/Users/Darrel Nguyen/Documents/Object Programming/Object-Programming2-DarrelN/FinalProjectObject/Data/employeeData.txt";
+
+        if (File.Exists(filePath))
+        {
+            employees.Clear();
+            using StreamReader reader = new StreamReader(filePath);
+            string line;
+            while ((line = reader.ReadLine()) != null)
+            {
+                string[] parts = line.Split(',');
+                if (parts.Length == 4)
+                {
+                    Employee loadedEmployee = new Employee
+                        {
+                            Name = parts[0],
+                            Position = parts[1],
+                            Salary = Convert.ToDouble(parts[2]),
+                            ContactPhone = parts[3]
+                        };
+                    employees.Add(loadedEmployee);
+                }
+            }
+        }
+    }
+
+    
+}
